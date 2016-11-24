@@ -28,7 +28,7 @@ void Entity::setNextMove(const sf::Vector2f& mov){
 }
 
 void Entity::handleEvent(EventHandler& evhan, const sf::Time deltaTime){
-	evhan.resolve(this);
+	evhan.resolve(*this);
 	m_NextMove.x *= deltaTime.asSeconds();
 	m_NextMove.y *= deltaTime.asSeconds();
 	m_NextMove.x *= m_Speed;
