@@ -4,24 +4,23 @@
 #include <SFML/Graphics.hpp>
 #include <memory>
 #include <string>
-#include "HandleEvent.hpp"
 #include "NoCopyable.hpp"
+#include "HandleEvent.hpp"
 
 class Entity: public sf::Sprite, private NoCopyable{
 public:
 	Entity(){}
-	Entity(int speed,std::shared_ptr<HandleEvent> eventHolder, std::string path);
+	Entity(int speed, std::string path);
 	~Entity(){}
 
 	Entity(Entity&& ent);
 	Entity& operator=(Entity&& ent);
 
-	void handleEvents(const sf::Event& event);
-	void setNextMov(const sf::Vector2f& mov);
+	void setNextMove(const sf::Vector2f& mov);
+	void handleEvent(EventHandler& evhan, const sf::Time deltaTime);
 private:
 	int m_Speed;
-	std::shared_ptr<HandleEvent> m_EventHolder;
-	sf::Vector2f m_NextMov;
+	sf::Vector2f m_NextMove;
 	sf::Texture m_Texture;
 };
 

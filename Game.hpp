@@ -3,10 +3,11 @@
 
 #include <SFML/Graphics.hpp>
 #include <vector>
-#include "Entity.hpp"
-#include "PlayerEvent.hpp"
-#include "EnnemiEvent.hpp"
+#include <memory>
 #include "NoCopyable.hpp"
+#include "Entity.hpp"
+#include "HandleEvent.hpp"
+#include "Event.hpp"
 
 class Game: private NoCopyable{
 public:
@@ -19,11 +20,14 @@ public:
 private:
 	void draw();
 	void handleEvents();
+	void update(sf::Time deltaTime);
+
 	sf::RenderWindow m_Window;
-	Entity m_Player;
-	std::vector<Entity> m_Ennemies;
-	std::shared_ptr<HandleEvent> m_PlayerEvent = std::make_shared<PlayerEvent>();
-	std::shared_ptr<HandleEvent> m_EnnemiEvent = std::make_shared<EnnemiEvent>();
+	std::vector<std::shared_ptr<Entity>> m_Ennemies;
+	std::shared_ptr<Entity> m_Player;
+	EventHandler m_PlayerEventHandler;
+	EventHandler m_EnnemiEventHandler;
+	const sf::Time TimePerFrame;
 };
 
 #endif

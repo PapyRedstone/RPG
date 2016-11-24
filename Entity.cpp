@@ -1,37 +1,38 @@
 #include "Entity.hpp"
 #include <iostream>
 
-Entity::Entity(int speed, std::shared_ptr<HandleEvent> eventHolder, std::string path):
+Entity::Entity(int speed, std::string path):
 	sf::Sprite(),
-	m_Speed{speed},
-	m_EventHolder{eventHolder}{
+	m_Speed{speed}{
 	m_Texture.loadFromFile(path);
 	setTexture(m_Texture);
+	scale(0.5f,0.5f);
 }
 
 Entity::Entity(Entity&& ent):
 	sf::Sprite(),
 	m_Speed(std::move(ent.m_Speed)),
-	m_EventHolder(std::move(ent.m_EventHolder)),
-	m_NextMov(std::move(ent.m_NextMov)),
+	m_NextMove(std::move(ent.m_NextMove)),
 	m_Texture(std::move(ent.m_Texture)){
-
 }
 
 Entity& Entity::operator=(Entity&& ent){
 	m_Speed = std::move(ent.m_Speed);
-	m_EventHolder = std::move(ent.m_EventHolder);
-	m_NextMov = std::move(ent.m_NextMov);
+	m_NextMove = std::move(ent.m_NextMove);
 	m_Texture = std::move(ent.m_Texture);
 	return *this;
 }
 
-void Entity::handleEvents(const sf::Event& event){
-	m_EventHolder->handleEvents(event,*this);
-	move(m_NextMov);
-	std::cout<<"x:"<<getPosition().x<<" y:"<<getPosition().y<<std::endl;
+void Entity::setNextMove(const sf::Vector2f& mov){
+	m_NextMove += mov;
 }
 
-void Entity::setNextMov(const sf::Vector2f& mov){
-	m_NextMov = sf::Vector2f(m_Speed*mov.x,m_Speed*mov.y);
+void Entity::handleEvent(EventHandler& evhan, const sf::Time deltaTime){
+	evhan.resolve(this);
+	m_NextMove.x *= deltaTime.asSeconds();
+	m_NextMove.y *= deltaTime.asSeconds();
+	m_NextMove.x *= m_Speed;
+	m_NextMove.y *= m_Speed;
+	move(m_NextMove);
+	m_NextMove = sf::Vector2f(0,0);
 }
